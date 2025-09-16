@@ -1,0 +1,232 @@
+/* Import font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap');
+
+/* New color theme */
+:root {
+    --primary-color: #2c3e50;
+    --accent-color: #3498db;
+    --background-light: #ecf0f1;
+    --background-dark: #11101d;
+    --card-bg: #ffffff;
+    --text-color: #2c3e50;
+    --text-light: #f4f4f4;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-color);
+    margin: 0;
+}
+
+/* ================== SIDEBAR ================== */
+.sidebar {
+    position: fixed;
+    height: 100%;
+    width: 78px;
+    background: #fff;
+    border-right: 1px solid #e0e0e0;
+    padding: 10px 0;
+    z-index: 99;
+    transition: all 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sidebar.open {
+    width: 250px;
+}
+
+.sidebar .logo-details {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    margin-bottom: 40px;
+}
+
+.sidebar .nav-list {
+    flex-grow: 1;
+    list-style: none;
+    padding: 0 12px;
+    margin: 0;
+}
+
+.sidebar li {
+    position: relative;
+    height: 50px;
+    line-height: 50px;
+}
+
+.sidebar li a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.4s ease;
+    background: none;
+    color: var(--text-color);
+    font-size: 1rem;
+    padding: 0 12px;
+}
+
+.sidebar li a i {
+    font-size: 20px;
+    min-width: 40px;
+}
+
+.sidebar li a:hover {
+    color: var(--accent-color);
+    background: #f0f0f0;
+}
+
+.sidebar li a:hover i {
+    color: var(--accent-color);
+}
+
+.sidebar li a .links_name {
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.5s ease;
+    padding-left: 15px;
+}
+
+.sidebar.open li a .links_name {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.sidebar .profile {
+    padding: 12px;
+    margin: 12px;
+    background: #f8f8f8;
+    border-radius: 8px;
+}
+
+.sidebar .profile .profile-details {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    opacity: 0;
+    pointer-events: none;
+    white-space: nowrap;
+    transition: all 0.5s ease;
+}
+
+.sidebar.open .profile .profile-details {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.profile .profile-details .name,
+.profile .profile-details .job {
+    color: var(--text-color);
+}
+
+.sidebar .profile #logout-btn {
+    color: var(--text-color);
+    cursor: pointer;
+}
+
+/* ================== DASHBOARD ================== */
+.home-section {
+    position: relative;
+    background: var(--background-light);
+    min-height: 100vh;
+    left: 78px;
+    width: calc(100% - 78px);
+    transition: all 0.5s ease;
+    padding: 12px 24px 24px 12px;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.sidebar.open ~ .home-section {
+    left: 250px;
+    width: calc(100% - 250px);
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.header {
+    margin-bottom: 24px;
+    padding: 24px;
+    border-radius: 12px;
+    background: var(--card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.header .page-title {
+    font-size: 2.2em;
+    color: var(--primary-color);
+    font-weight: 600;
+    margin: 0;
+}
+
+.header .area-details {
+    font-size: 1.1em;
+    color: #666;
+    margin-top: 5px;
+}
+
+.content-scroll {
+    overflow-y: auto;
+    max-height: calc(100vh - 140px);
+    padding-right: 10px;
+}
+
+.content-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.content-scroll::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 3px;
+}
+
+.content-scroll::-webkit-scrollbar-thumb:hover {
+    background: #999;
+}
+
+.charts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 10px;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+.chart-box {
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.chart-box:hover {
+    transform: translateY(-5px);
+}
+
+/* ================== RESPONSIVE ================== */
+@media screen and (max-width: 768px) {
+    .sidebar {
+        width: 60px;
+    }
+    .sidebar.open {
+        width: 200px;
+    }
+    .sidebar.open ~ .home-section {
+        left: 200px;
+        width: calc(100% - 200px);
+    }
+    .home-section {
+        left: 60px;
+        width: calc(100% - 60px);
+    }
+    .charts-container {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+}
