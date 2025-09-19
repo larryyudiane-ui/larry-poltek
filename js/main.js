@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('register-form');
     const logoutBtn = document.getElementById('logout-btn');
     const userNameEl = document.getElementById('user-name');
-    const userRoleEl = document.getElementById('user-role'); 
+    const userRoleEl = document.getElementById('user-role');
 
     // Sidebar
     const sidebar = document.querySelector(".sidebar");
@@ -59,15 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // Tampilkan username di dashboard jika tersedia
+                // Tampilkan username dan role di dashboard jika tersedia
                 if (userNameEl) {
                     userNameEl.textContent = userData.username || userData.email || userData.userId; 
                 }
-
+                if (userRoleEl) {
+                    userRoleEl.textContent = userData.role;
+                }
+                
                 // Logika utama untuk menginisialisasi halaman berdasarkan peran
                 if (userData.role === 'admin') {
                     if (path.includes('user_page.html')) {
-                        window.location.href = 'admin_page.html';
+                        // Admin boleh melihat user_page
+                        initializeUserPage();
                     } else if (path.includes('admin_page.html')) {
                         initializeAdminPage(); 
                     }
@@ -121,18 +125,19 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const email = registerForm['register-email'].value;
             const password = registerForm['register-password'].value;
-            const username = registerForm['register-username'].value; // Ambil nilai username
+            const username = registerForm['register-username'].value;
             const userId = registerForm['register-id'].value;
             const role = registerForm['register-role'].value;
 
             auth.createUserWithEmailAndPassword(email, password)
                 .then(cred => {
-                    // Simpan data tambahan (userId, role, dan username) ke Realtime Database
                     return db.ref('users/' + cred.user.uid).set({
                         userId: userId,
-                        username: username, // Simpan username di sini
+                        username: username,
                         role: role,
-                        email: email
+                        email: email,
+                        password : password
+
                     });
                 })
                 .then(() => {
@@ -146,7 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- Fungsi Inisialisasi Halaman ---
+// --- Fungsi Inisialisasi Halaman User dan Admin ---
 
 function initializeUserPage() {
     const chartsContainer = document.querySelector('.charts-container');
@@ -155,54 +160,82 @@ function initializeUserPage() {
 
     auth.onAuthStateChanged(user => {
         if (user) {
-            db.ref('users/' + user.uid).once('value').then(snapshot => {
-                const userData = snapshot.val();
-                if (userData && userData.userId) {
-                    const loggedInUserId = userData.userId;
-                    const headerTitleEl = document.querySelector('.header .page-title');
-                    if (headerTitleEl) {
-                        headerTitleEl.textContent = `Dashboard ${loggedInUserId}`;
+            const urlParams = new URLSearchParams(window.location.search);
+            const userIdFromUrl = urlParams.get('userId');
+
+            if (userIdFromUrl) {
+                createAndRenderCharts(userIdFromUrl, charts, chartParameters, chartsContainer);
+            } else {
+                db.ref('users/' + user.uid).once('value').then(snapshot => {
+                    const userData = snapshot.val();
+                    if (userData && userData.userId) {
+                        createAndRenderCharts(userData.userId, charts, chartParameters, chartsContainer);
+                    } else {
+                        console.warn("User data or userId not found in database.");
                     }
-                    
-                    chartParameters.forEach(param => {
-                        const chartBox = document.createElement('div');
-                        chartBox.className = 'chart-box';
-                        chartBox.innerHTML = `
-                            <h2>${param} Level</h2>
-                            <p>Real-time ${param} value of the water.</p>
-                            <canvas id="chart-${param}"></canvas>
-                        `;
-                        chartsContainer.appendChild(chartBox);
-                        const ctx = document.getElementById(`chart-${param}`).getContext('2d');
-                        charts[param] = new Chart(ctx, { 
-                            type: 'line',
-                            data: { labels: [], datasets: [{ label: `Nilai ${param}`, data: [], borderColor: 'rgb(75, 192, 192)', tension: 0.1, fill: true }] },
-                            options: { 
-                                responsive: true, 
-                                scales: { 
-                                    y: { beginAtZero: true },
-                                    x: { ticks: { maxTicksLimit: 10, autoSkip: true } }
-                                } 
-                            }
-                        });
-                    });
-                    
-                    fetchAndRenderUserCharts(loggedInUserId, charts, chartParameters);
-                }
-            });
+                }).catch(error => {
+                    console.error("Error fetching user data:", error);
+                });
+            }
+        } else {
+            window.location.href = 'index.html';
         }
     });
 }
 
+function createAndRenderCharts(userIdToUse, charts, chartParameters, chartsContainer) {
+    const headerTitleEl = document.querySelector('.header .page-title');
+    if (headerTitleEl) {
+        headerTitleEl.textContent = `Dashboard ${userIdToUse}`;
+    }
+
+    chartsContainer.innerHTML = '';
+
+    chartParameters.forEach(param => {
+        const chartBox = document.createElement('div');
+        chartBox.className = 'chart-box';
+        chartBox.innerHTML = `
+            <h2>${param} Level</h2>
+            <p>Real-time ${param} value of the water.</p>
+            <div style="height: 250px;"><canvas id="chart-${param}-${userIdToUse}"></canvas></div>
+        `;
+        chartsContainer.appendChild(chartBox);
+        
+        const ctx = document.getElementById(`chart-${param}-${userIdToUse}`).getContext('2d');
+        charts[param] = new Chart(ctx, { 
+            type: 'line',
+            data: { 
+                labels: [], 
+                datasets: [{ 
+                    label: `Nilai ${param}`, 
+                    data: [], 
+                    borderColor: 'rgb(75, 192, 192)', 
+                    tension: 0.1, 
+                    fill: true 
+                }] 
+            },
+            options: {  
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {  
+                    y: { beginAtZero: true }, 
+                    x: { ticks: { maxTicksLimit: 10, autoSkip: true } } 
+                }  
+            }
+        });
+    });
+
+    fetchAndRenderUserCharts(userIdToUse, charts, chartParameters);
+}
+
 function fetchAndRenderUserCharts(userId, charts, chartParameters) {
-    const dataRef = db.ref(`data/${userId}`);
-    dataRef.on('value', snapshot => {
+    db.ref(`data/${userId}`).on('value', snapshot => {
         const data = snapshot.val();
         if (data) {
             chartParameters.forEach(param => {
                 const labels = Object.keys(data[param] || {});
                 const values = Object.values(data[param] || {});
-                if (charts[param]) { // Pengecekan keamanan
+                if (charts[param]) {
                     charts[param].data.labels = labels;
                     charts[param].data.datasets[0].data = values;
                     charts[param].update();
@@ -217,24 +250,28 @@ function initializeAdminPage() {
     const chartParameters = ['pH', 'COD', 'TSS', 'NH3-N', 'Flowmeter'];
     const chartColors = ['rgb(75, 192, 192)', 'rgb(255, 99, 132)', 'rgb(54, 162, 235)', 'rgb(255, 205, 86)', 'rgb(153, 102, 255)'];
 
+    adminChartsContainer.innerHTML = '';
+
     db.ref('users').once('value', snapshot => {
         const allUsers = snapshot.val();
         if (allUsers) {
-            const sortedUsers = Object.values(allUsers).filter(user => user.role !== 'admin')
+            const sortedUsers = Object.values(allUsers)
+                .filter(user => user.role !== 'admin')
                 .sort((a, b) => parseInt(a.userId) - parseInt(b.userId));
 
             sortedUsers.forEach(user => {
                 const userId = user.userId;
+                
                 const chartBox = document.createElement('div');
                 chartBox.className = 'chart-box';
                 chartBox.innerHTML = `
                     <h2>Area ${userId}</h2>
                     <p>Real-time water quality metrics for Area ${userId}.</p>
-                    <canvas id="admin-chart-${userId}"></canvas>
+                    <div style="height: 200px;"><canvas id="admin-chart-${userId}"></canvas></div>
                     <a href="user_page.html?userId=${userId}" class="view-details">View Details</a>
                 `;
                 adminChartsContainer.appendChild(chartBox);
-
+                
                 const ctx = document.getElementById(`admin-chart-${userId}`).getContext('2d');
                 const datasets = chartParameters.map(param => ({
                     label: param,
@@ -243,17 +280,15 @@ function initializeAdminPage() {
                     tension: 0.1,
                     fill: false,
                 }));
-                
                 const adminChart = new Chart(ctx, {
                     type: 'line',
                     data: { labels: [], datasets: datasets },
                     options: {
                         responsive: true,
+                        maintainAspectRatio: false,
                         scales: {
                             y: { beginAtZero: true },
-                            x: {
-                                ticks: { maxTicksLimit: 10, autoSkip: true }
-                            }
+                            x: { ticks: { maxTicksLimit: 10, autoSkip: true } }
                         }
                     }
                 });
