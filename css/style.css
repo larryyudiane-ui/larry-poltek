@@ -210,6 +210,25 @@ body {
     transform: translateY(-5px);
 }
 
+/* Modifikasi pada header-content untuk menata ikon dan judul */
+.header-content {
+    display: flex;
+    align-items: center; /* Menyelaraskan ikon dan teks secara vertikal */
+    gap: 15px; /* Memberikan jarak antara ikon dan judul */
+    flex-wrap: wrap; /* Mengizinkan wrap pada layar kecil */
+}
+
+/* Styling untuk ikon dashboard */
+.dashboard-icon {
+    font-size: 2.5em; /* Ukuran ikon */
+    color: var(--primary-color); /* Warna ikon, bisa disesuaikan */
+}
+
+/* Penyesuaian untuk page-title agar tidak terlalu dekat dengan ikon */
+.header-content .page-title {
+    margin: 0; /* Menghapus margin default jika ada */
+}
+
 /* ================== RESPONSIVE ================== */
 @media screen and (max-width: 768px) {
     .sidebar {
