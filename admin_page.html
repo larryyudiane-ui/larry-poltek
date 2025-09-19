@@ -6,47 +6,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Dashboard - Water Quality</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
-  <!-- Styles -->
   <link rel="stylesheet" href="css/style.css">
   <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
 </head>
 
 <body>
- <div class="sidebar">
-        <div class="logo-details">
-            <i class='bx bxl-codepen icon'></i>
-            <i class='bx bx-menu' id="btn-sidebar"></i>
-        </div>
-        <ul class="nav-list">
-            <li>
-                <a href="#">
-                    <i class='bx bx-grid-alt'></i>
-                    <span class="links_name">Dashboard</span>
-                </a>
-            </li>
-            <li>
-                <a href="#" id="logout-btn">
-                    <i class='bx bx-log-out'></i>
-                    <span class="links_name">Logout</span>
-                </a>
-            </li>
-        </ul>
+  <div class="sidebar">
+    <div class="logo-details">
+      <i class='bx bxl-codepen icon'></i>
+      <i class='bx bx-menu' id="btn-sidebar"></i>
     </div>
+    <ul class="nav-list">
+      <li>
+        <a href="#">
+          <i class='bx bx-grid-alt'></i>
+          <span class="links_name">Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#" id="logout-btn">
+          <i class='bx bx-log-out'></i>
+          <span class="links_name">Logout</span>
+        </a>
+      </li>
+    </ul>
+  </div>
 
-  <!-- Main Section -->
   <section class="home-section">
     <div class="header">
-      <h1 class="page-title">Admin Dashboard</h1>
-      <p class="area-details">Real-time water quality metrics for all areas.</p>
+      <div class="header-left">
+        <h1 class="page-title">Admin Dashboard</h1>
+        <p class="area-details">Real-time water quality metrics for all areas.</p>
+      </div>
+      <div class="user-profile">
+        <i class='bx bxs-user-circle profile-icon'></i>
+        <span id="user-name"></span>
+      </div>
     </div>
     
     <div id="admin-charts-container" class="charts-container">
-      <!-- Chart boxes will be injected here -->
-    </div>
+      </div>
   </section>
 
-  <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-auth.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
