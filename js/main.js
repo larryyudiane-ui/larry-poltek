@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('register-form');
     const logoutBtn = document.getElementById('logout-btn');
     const userNameEl = document.getElementById('user-name');
-    const userRoleEl = document.getElementById('user-role'); // Jika Anda menggunakannya
+    const userRoleEl = document.getElementById('user-role'); 
 
     // Sidebar
     const sidebar = document.querySelector(".sidebar");
@@ -59,9 +59,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     return;
                 }
                 
-                // Tampilkan nama atau email pengguna di dashboard
+                // Tampilkan username di dashboard jika tersedia
                 if (userNameEl) {
-                    userNameEl.textContent = userData.email || userData.userId; 
+                    userNameEl.textContent = userData.username || userData.email || userData.userId; 
                 }
 
                 // Logika utama untuk menginisialisasi halaman berdasarkan peran
@@ -121,12 +121,16 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const email = registerForm['register-email'].value;
             const password = registerForm['register-password'].value;
+            const username = registerForm['register-username'].value; // Ambil nilai username
             const userId = registerForm['register-id'].value;
             const role = registerForm['register-role'].value;
+
             auth.createUserWithEmailAndPassword(email, password)
                 .then(cred => {
+                    // Simpan data tambahan (userId, role, dan username) ke Realtime Database
                     return db.ref('users/' + cred.user.uid).set({
                         userId: userId,
+                        username: username, // Simpan username di sini
                         role: role,
                         email: email
                     });
