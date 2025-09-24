@@ -22,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const userNameEl = document.getElementById('user-name');
     const userRoleEl = document.getElementById('user-role');
 
+    
+
     // Sidebar
     const sidebar = document.querySelector(".sidebar");
     const sidebarBtn = document.querySelector("#btn-sidebar");
@@ -319,3 +321,4 @@ function getChartColor(param) {
     };
     return colors[param] || 'rgb(0,0,0)';
 }
+
