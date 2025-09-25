@@ -231,9 +231,13 @@ function createAndRenderCharts(userIdToUse, charts, chartParameters, chartsConta
 }
 
 function fetchAndRenderUserCharts(userId, charts, chartParameters) {
+    let isDummyMode = false;
+    let updateInterval;
+
     db.ref(`data/${userId}`).on('value', snapshot => {
         const data = snapshot.val();
         if (data) {
+            // Real data available, use it and stop dummy mode if active
             chartParameters.forEach(param => {
                 const labels = Object.keys(data[param] || {});
                 const values = Object.values(data[param] || {});
@@ -243,6 +247,41 @@ function fetchAndRenderUserCharts(userId, charts, chartParameters) {
                     charts[param].update();
                 }
             });
+            if (isDummyMode) {
+                clearInterval(updateInterval);
+                isDummyMode = false;
+            }
+        } else if (!isDummyMode) {
+            // No real data, initialize dummy mode
+            const dummyData = generateDummyData(10);
+            chartParameters.forEach(param => {
+                const labels = Object.keys(dummyData[param]);
+                const values = Object.values(dummyData[param]);
+                if (charts[param]) {
+                    charts[param].data.labels = labels;
+                    charts[param].data.datasets[0].data = values;
+                    charts[param].update();
+                }
+            });
+            isDummyMode = true;
+
+            // Simulate real-time updates every 5 seconds
+            updateInterval = setInterval(() => {
+                const now = new Date().toISOString().slice(11, 16); // HH:MM
+                chartParameters.forEach(param => {
+                    if (charts[param]) {
+                        const newValue = generateNewDummyValue(param);
+                        charts[param].data.labels.push(now);
+                        charts[param].data.datasets[0].data.push(newValue);
+                        // Keep only the last 20 points for performance
+                        if (charts[param].data.labels.length > 20) {
+                            charts[param].data.labels.shift();
+                            charts[param].data.datasets[0].data.shift();
+                        }
+                        charts[param].update();
+                    }
+                });
+            }, 5000);
         }
     });
 }
@@ -295,15 +334,51 @@ function initializeAdminPage() {
                     }
                 });
 
+                let isDummyMode = false;
+                let updateInterval;
+
                 db.ref(`data/${userId}`).on('value', dataSnapshot => {
                     const data = dataSnapshot.val();
                     if (data) {
+                        // Real data available, use it and stop dummy mode if active
                         const labels = Object.keys(data.pH || {});
                         adminChart.data.labels = labels;
                         chartParameters.forEach((param, index) => {
                             adminChart.data.datasets[index].data = Object.values(data[param] || {});
                         });
                         adminChart.update();
+                        if (isDummyMode) {
+                            clearInterval(updateInterval);
+                            isDummyMode = false;
+                        }
+                    } else if (!isDummyMode) {
+                        // No real data, initialize dummy mode
+                        const dummyData = generateDummyData(10);
+                        const labels = Object.keys(dummyData.pH);
+                        adminChart.data.labels = labels;
+                        chartParameters.forEach((param, index) => {
+                            adminChart.data.datasets[index].data = Object.values(dummyData[param]);
+                        });
+                        adminChart.update();
+                        isDummyMode = true;
+
+                        // Simulate real-time updates every 5 seconds
+                        updateInterval = setInterval(() => {
+                            const now = new Date().toISOString().slice(11, 16); // HH:MM
+                            chartParameters.forEach((param, index) => {
+                                const newValue = generateNewDummyValue(param);
+                                adminChart.data.labels.push(now);
+                                adminChart.data.datasets[index].data.push(newValue);
+                                // Keep only the last 20 points for performance
+                                if (adminChart.data.labels.length > 20) {
+                                    adminChart.data.labels.shift();
+                                    chartParameters.forEach((_, idx) => {
+                                        adminChart.data.datasets[idx].data.shift();
+                                    });
+                                }
+                            });
+                            adminChart.update();
+                        }, 5000);
                     }
                 });
             });
@@ -320,5 +395,43 @@ function getChartColor(param) {
         Flowmeter: 'rgb(153, 102, 255)'
     };
     return colors[param] || 'rgb(0,0,0)';
+}
+
+// Generate dummy data for demonstration if no real data in Firebase
+function generateDummyData(numPoints = 10) {
+    const now = new Date();
+    const data = {};
+    const parameters = ['pH', 'COD', 'TSS', 'NH3-N', 'Flowmeter'];
+    const ranges = {
+        pH: { min: 6.5, max: 8.5 },
+        COD: { min: 20, max: 100 },
+        TSS: { min: 10, max: 200 },
+        'NH3-N': { min: 0.1, max: 5 },
+        Flowmeter: { min: 100, max: 1000 }
+    };
+
+    parameters.forEach(param => {
+        data[param] = {};
+        for (let i = numPoints - 1; i >= 0; i--) {
+            const time = new Date(now.getTime() - i * 3600000); // 1 hour apart
+            const timestamp = time.toISOString().slice(11, 16); // HH:MM
+            const value = (Math.random() * (ranges[param].max - ranges[param].min) + ranges[param].min).toFixed(2);
+            data[param][timestamp] = parseFloat(value);
+        }
+    });
+    return data;
+}
+
+// Generate a single new dummy value for a parameter
+function generateNewDummyValue(param) {
+    const ranges = {
+        pH: { min: 6.5, max: 8.5 },
+        COD: { min: 20, max: 100 },
+        TSS: { min: 10, max: 200 },
+        'NH3-N': { min: 0.1, max: 5 },
+        Flowmeter: { min: 100, max: 1000 }
+    };
+    const range = ranges[param] || { min: 0, max: 100 };
+    return parseFloat((Math.random() * (range.max - range.min) + range.min).toFixed(2));
 }
 
