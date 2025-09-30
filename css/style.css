@@ -84,6 +84,29 @@ body {
     color: var(--accent-color);
 }
 
+.sidebar li.active a {
+    background: var(--accent-color);
+    color: white;
+}
+
+.sidebar li.active a i {
+    color: white;
+}
+
+.active-indicator {
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.5s ease;
+    color: white;
+    margin-left: 10px;
+    font-size: 1.2em;
+}
+
+.sidebar.open li.active .active-indicator {
+    opacity: 1;
+    pointer-events: auto;
+}
+
 .sidebar li a .links_name {
     opacity: 0;
     pointer-events: none;
