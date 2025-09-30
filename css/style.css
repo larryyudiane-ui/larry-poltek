@@ -177,8 +177,9 @@ body {
         margin-bottom: 24px;
         padding: 24px;
         border-radius: 12px;
-        background: var(--card-bg);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        background: linear-gradient(135deg, var(--card-bg) 0%, #f8f9fa 100%);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(52, 152, 219, 0.1);
+        border: 1px solid rgba(52, 152, 219, 0.1);
     }
 
     .header .page-title {
@@ -231,19 +232,10 @@ body {
 
     .chart-box:hover {
         transform: translateY(-5px);
+        background: rgba(52, 152, 219, 0.1);
     }
 
-    /* Pastikan ini ada di CSS Anda */
-.header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    padding: 24px;
-    border-radius: 12px;
-    background: var(--card-bg);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
+
 
 /* Gaya untuk kontainer profil pengguna */
 .user-profile {
@@ -252,7 +244,8 @@ body {
     gap: 10px; /* Jarak antara ikon dan nama */
     font-size: 1.1em; /* Ukuran font untuk nama */
     font-weight: 600;
-    color: var(--primary-color); 
+    color: var(--primary-color);
+    margin-left: auto; /* Letakkan di ujung kolom */
 }
 
 /* Gaya untuk ikon personal */
