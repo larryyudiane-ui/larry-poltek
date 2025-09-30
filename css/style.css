@@ -180,6 +180,7 @@ body {
         background: linear-gradient(135deg, var(--card-bg) 0%, #f8f9fa 100%);
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(52, 152, 219, 0.1);
         border: 1px solid rgba(52, 152, 219, 0.1);
+        align-items: flex-start;
     }
 
     .header .header-left {
