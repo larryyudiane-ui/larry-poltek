@@ -195,24 +195,7 @@ body {
         margin-top: 5px;
     }
 
-    .content-scroll {
-        overflow-y: auto;
-        max-height: calc(100vh - 140px);
-        padding-right: 10px;
-    }
 
-    .content-scroll::-webkit-scrollbar {
-        width: 6px;
-    }
-
-    .content-scroll::-webkit-scrollbar-thumb {
-        background: #ccc;
-        border-radius: 3px;
-    }
-
-    .content-scroll::-webkit-scrollbar-thumb:hover {
-        background: #999;
-    }
 
     .charts-container {
         display: grid;
