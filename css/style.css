@@ -182,6 +182,10 @@ body {
         border: 1px solid rgba(52, 152, 219, 0.1);
     }
 
+    .header .header-left {
+        flex: 1;
+    }
+
     .header .page-title {
         font-size: 2.2em;
         color: var(--primary-color);
@@ -229,6 +233,8 @@ body {
     font-weight: 600;
     color: var(--primary-color);
     margin-left: auto; /* Letakkan di ujung kolom */
+    height: 100%; /* Pastikan tinggi penuh kolom */
+    justify-content: flex-end; /* Letakkan di ujung kanan */
 }
 
 /* Gaya untuk ikon personal */
