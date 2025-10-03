@@ -40,13 +40,16 @@
       <div class="header-left">
         <h1 class="page-title">Admin Dashboard</h1>
         <p class="area-details">Real-time water quality metrics for all areas.</p>
+        <div class="timestamp">
+            <span>Last Updated: <span id="current-time"></span></span>
+        </div>
       </div>
       <div class="user-profile">
         <i class='bx bxs-user-circle profile-icon'></i>
         <span id="user-name"></span>
       </div>
     </div>
-    
+
     <div id="admin-charts-container" class="charts-container">
       </div>
   </section>
@@ -56,6 +59,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/timestamp.js"></script>
 </body>
 
 </html>

@@ -1,5 +1,7 @@
-# TODO: Add Active Mark to Dashboard in Sidebar
+# Task: Add Decoration to Header Columns on Admin and User Pages
 
-- [x] Edit user_page.html: Add class="active" to dashboard li and insert active indicator span
-- [x] Edit admin_page.html: Add class="active" to dashboard li and insert active indicator span
-- [x] Edit css/style.css: Add styles for active li and active indicator
+## Steps to Complete:
+- [x] Update css/style.css to enhance the .header class with decorative styles (e.g., background patterns, borders, shadows, accents)
+- [x] Move timestamp inside the header as requested
+- [x] Verify the decoration looks good on both admin_page.html and user_page.html
+- [x] Test the pages visually using browser_action to ensure the decoration is applied correctly
