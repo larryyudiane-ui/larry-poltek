@@ -445,4 +445,3 @@ function generateNewDummyValue(param) {
     const range = ranges[param] || { min: 0, max: 100 };
     return parseFloat((Math.random() * (range.max - range.min) + range.min).toFixed(2));
 }
-
